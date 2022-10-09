@@ -38,7 +38,7 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     switch (current_layer) {
         case MAC_BASE:
         case WIN_BASE:
-#ifdef CAPS_LOCK_INDICATOR_COLOR
+#ifdef CAPS_LOCK_INDICATOR_ENABLE
             if (host_keyboard_led_state().caps_lock) {
                 rgb_matrix_set_color_by_keycode(led_min, led_max, current_layer, is_not_caps_lock_indicator);
                 rgb_matrix_enable_noeeprom();
