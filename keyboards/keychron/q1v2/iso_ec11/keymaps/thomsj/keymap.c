@@ -91,6 +91,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 host_consumer_send(0);
             }
             return false;  // Skip all further processing of this key
+        case KC_CAPS:
+            if (record->event.pressed) {
+                rgb_matrix_toggle_noeeprom();
+            }        
         default:
             return true;   // Process all other keycodes normally
     }
