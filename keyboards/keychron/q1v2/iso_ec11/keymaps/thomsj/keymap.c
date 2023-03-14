@@ -97,7 +97,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 switch (get_highest_layer(layer_state)) {
                     case MAC_BASE:
                     case WIN_BASE:
-                        rgb_matrix_toggle_noeeprom();
+                        // Don't use `rgb_matrix_toggle_noeeprom()`
+                        // as the user may have manually toggled RGB
+                        if (host_keyboard_led_state().caps_lock) {
+                            rgb_matrix_disable_noeeprom();
+                        } else {
+                            rgb_matrix_enable_noeeprom();
+                        }
                         break;
                 }
             }
