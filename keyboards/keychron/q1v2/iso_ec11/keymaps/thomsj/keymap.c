@@ -99,3 +99,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return true;   // Process all other keycodes normally
     }
 }
+
+// put all the rgb handling in `#ifdef RGB_MATRIX_ENABLE` block,
+// or can this work without the rgb matrix?
