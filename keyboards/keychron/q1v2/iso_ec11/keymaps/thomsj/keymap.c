@@ -102,6 +102,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
 #endif
+#ifdef FN_LAYER_TRANSPARENT_KEYS_OFF
+        case MO(MAC_FN):
+        case MO(WIN_FN):
+            if (record->event.pressed) {
+                rgb_matrix_enable_noeeprom();
+            } else {
+#ifdef CAPS_LOCK_INDICATOR_ENABLE
+                if (!host_keyboard_led_state().caps_lock) {
+                    rgb_matrix_disable_noeeprom();
+                }
+#else
+                rgb_matrix_disable_noeeprom();
+#endif
+            }
+#endif
         default:
             return true;   // Process all other keycodes normally
     }
@@ -109,3 +124,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 // put all the rgb handling in `#ifdef RGB_MATRIX_ENABLE` block,
 // or can this work without the rgb matrix?
+
+// turn off rgb when on fn layer and
+// `FN_LAYER_TRANSPARENT_KEYS_OFF` is not defined
