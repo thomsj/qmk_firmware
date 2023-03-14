@@ -137,6 +137,4 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // put all the rgb handling in `#ifdef RGB_MATRIX_ENABLE` block,
 // or can this work without the rgb matrix?
 
-// put everything in if/or the two defines?
-
 // rename `FN_LAYER_TRANSPARENT_KEYS_OFF`
