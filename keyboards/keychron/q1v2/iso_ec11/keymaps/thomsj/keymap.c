@@ -83,14 +83,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else {
                 host_consumer_send(0);
             }
-            return false;  // Skip all further processing of this key
+            return false;
         case KC_LAUNCHPAD:
             if (record->event.pressed) {
                 host_consumer_send(0x2A0);
             } else {
                 host_consumer_send(0);
             }
-            return false;  // Skip all further processing of this key
+            return false;
 #ifdef CAPS_LOCK_INDICATOR_ENABLE
         case KC_CAPS:
             if (record->event.pressed) {
@@ -124,7 +124,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return true;
         default:
-            return true;   // Process all other keycodes normally
+            return true;
     }
 }
 
