@@ -91,10 +91,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 host_consumer_send(0);
             }
             return false;  // Skip all further processing of this key
+#ifdef CAPS_LOCK_INDICATOR_ENABLE
         case KC_CAPS:
             if (record->event.pressed) {
-                rgb_matrix_toggle_noeeprom();
-            }        
+                switch (get_highest_layer(layer_state)) {
+                    case MAC_BASE:
+                    case WIN_BASE:
+                        rgb_matrix_toggle_noeeprom();
+                        break;
+                }
+            }
+#endif
         default:
             return true;   // Process all other keycodes normally
     }
