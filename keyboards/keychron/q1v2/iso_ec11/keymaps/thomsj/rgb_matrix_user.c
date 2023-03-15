@@ -33,26 +33,28 @@ void keyboard_post_init_user(void) {
     }
 }
 
+bool dip_switch_update_user(uint8_t index, bool active) { 
+    switch (index) {
+    }
+}
+
 void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     uint8_t current_layer = get_highest_layer(layer_state);
     switch (current_layer) {
+#ifdef CAPS_LOCK_INDICATOR_ENABLE
         case MAC_BASE:
         case WIN_BASE:
-#ifdef CAPS_LOCK_INDICATOR_ENABLE
-            rgb_matrix_set_color_all(0, 255, 0);
-
             if (host_keyboard_led_state().caps_lock) {
                 rgb_matrix_set_color_by_keycode(led_min, led_max, current_layer, is_not_caps_lock_indicator);
             }
-#endif
             break;
-//         case MAC_FN:
-//         case WIN_FN:
-// #ifdef FN_LAYER_TRANSPARENT_KEYS_OFF
-//             rgb_matrix_set_color_by_keycode(led_min, led_max, current_layer, is_inactive);
-//             rgb_matrix_enable_noeeprom();
-// #endif
-//             break;
+#endif
+#ifdef FN_LAYER_TRANSPARENT_KEYS_OFF
+        case MAC_FN:
+        case WIN_FN:
+            rgb_matrix_set_color_by_keycode(led_min, led_max, current_layer, is_inactive);
+            break;
+#endif
     }
 }
 
