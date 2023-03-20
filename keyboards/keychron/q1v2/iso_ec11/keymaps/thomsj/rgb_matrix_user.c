@@ -18,6 +18,14 @@
 #include "rgb_matrix_user.h"
 #include "keymap_user.h"
 
+#ifdef CAPS_LOCK_INDICATOR_ENABLE
+int16_t not_caps_indicators[DRIVER_LED_TOTAL];
+#endif
+
+#ifdef FN_LAYER_TRANSPARENT_KEYS_OFF
+int16_t not_fn_indicators[DRIVER_LED_TOTAL];
+#endif
+
 keypos_t led_index_key_position[DRIVER_LED_TOTAL];
 
 void keyboard_post_init_user(void) {
@@ -31,14 +39,39 @@ void keyboard_post_init_user(void) {
             }
         }
     }
+
+    //replace below func and storing that is required here with `default_layer_state_set_user()`
 }
 
 bool dip_switch_update_user(uint8_t index, bool active) { 
-    switch (index) {
+    uint8_t base_layer = (1UL << (active ? 2 : 0));
+    store_all_non_indicators(base_layer);
+    return true;
+}
+
+void store_all_non_indicators(uint8_t base_layer) {
+#ifdef CAPS_LOCK_INDICATOR_ENABLE
+    store_non_indicators(not_caps_indicators, base_layer, is_caps_lock_indicator);
+#endif
+
+#ifdef FN_LAYER_TRANSPARENT_KEYS_OFF
+    store_non_indicators(not_fn_indicators, base_layer + 1, is_active);
+#endif
+}
+
+void store_non_indicators(int16_t non_indicators[DRIVER_LED_TOTAL], uint8_t layer, bool (*is_indicator)(uint16_t)) {
+    memset(non_indicators, -1, sizeof int16_t * DRIVER_LED_TOTAL);
+    
+    for (uint8_t i = 0U, uint8_t j = 0U; i < DRIVER_LED_TOTAL; i++) {
+        uint16_t keycode = keymap_key_to_keycode(layer, led_index_key_position[i]);
+
+        if (!(*is_indicator)(keycode)) {
+            not_caps_indicators[j++] = i;
+        }
     }
 }
 
-void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+void rgb_matrix_indicators_user(void) {
     uint8_t current_layer = get_highest_layer(layer_state);
     switch (current_layer) {
 #ifdef CAPS_LOCK_INDICATOR_ENABLE
@@ -67,12 +100,14 @@ void rgb_matrix_set_color_by_keycode(uint8_t led_min, uint8_t led_max, uint8_t l
     }
 }
 
-bool is_not_caps_lock_indicator(uint16_t keycode) {
+bool is_caps_lock_indicator(uint16_t keycode) {
 #ifdef CAPS_LOCK_INDICATOR_LIGHT_ALPHAS
-    return keycode != KC_CAPS && (keycode > KC_Z || keycode < KC_A);
+    return keycode == KC_CAPS || (keycode <= KC_Z && keycode >= KC_A);
 #else
-    return keycode != KC_CAPS;
+    return keycode == KC_CAPS;
 #endif
 }
 
-bool is_inactive(uint16_t keycode) { return keycode == KC_TRNS || keycode == KC_NO; }
+bool is_active(uint16_t keycode) {
+    return keycode != KC_TRNS && keycode != KC_NO;
+}
