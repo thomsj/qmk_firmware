@@ -77,6 +77,7 @@ void rgb_matrix_indicators_user(void) {
 #ifdef CAPS_LOCK_INDICATOR_ENABLE
         case MAC_BASE:
         case WIN_BASE:
+            // Don't turn off any keys if the user has manually turned on RGB
             if (host_keyboard_led_state().caps_lock) {
                 rgb_matrix_set_color_by_keycode(led_min, led_max, current_layer, is_not_caps_lock_indicator);
             }
