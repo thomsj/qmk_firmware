@@ -39,17 +39,14 @@ void keyboard_post_init_user(void) {
             }
         }
     }
-
-    //replace below func and storing that is required here with `default_layer_state_set_user()`
 }
 
-bool dip_switch_update_user(uint8_t index, bool active) { 
-    uint8_t base_layer = (1UL << (active ? 2 : 0));
-    store_all_non_indicators(base_layer);
-    return true;
+layer_state_t default_layer_state_set_user(layer_state_t state) {
+    store_all_non_indicators(state);
+    return state;
 }
 
-void store_all_non_indicators(uint8_t base_layer) {
+void store_all_non_indicators(layer_state_t base_layer) {
 #ifdef CAPS_LOCK_INDICATOR_ENABLE
     store_non_indicators(not_caps_indicators, base_layer, is_caps_lock_indicator);
 #endif
@@ -66,7 +63,7 @@ void store_non_indicators(int16_t non_indicators[DRIVER_LED_TOTAL], uint8_t laye
         uint16_t keycode = keymap_key_to_keycode(layer, led_index_key_position[i]);
 
         if (!(*is_indicator)(keycode)) {
-            not_caps_indicators[j++] = i;
+            non_indicators[j++] = i;
         }
     }
 }
@@ -79,25 +76,28 @@ void rgb_matrix_indicators_user(void) {
         case WIN_BASE:
             // Don't turn off any keys if the user has manually turned on RGB
             if (host_keyboard_led_state().caps_lock) {
-                rgb_matrix_set_color_by_keycode(led_min, led_max, current_layer, is_not_caps_lock_indicator);
+                rgb_matrix_set_color_by_keycode(not_caps_indicators);
             }
             break;
 #endif
 #ifdef FN_LAYER_TRANSPARENT_KEYS_OFF
         case MAC_FN:
         case WIN_FN:
-            rgb_matrix_set_color_by_keycode(led_min, led_max, current_layer, is_inactive);
+            rgb_matrix_set_color_by_keycode(not_fn_indicators);
             break;
 #endif
     }
 }
 
-void rgb_matrix_set_color_by_keycode(uint8_t led_min, uint8_t led_max, uint8_t layer, bool (*is_keycode)(uint16_t)) {
-    for (uint8_t i = led_min; i < led_max; i++) {
-        uint16_t keycode = keymap_key_to_keycode(layer, led_index_key_position[i]);
-        if ((*is_keycode)(keycode)) {
-            rgb_matrix_set_color(i, RGB_OFF);
+void rgb_matrix_set_color_by_keycode(int16_t non_indicators[DRIVER_LED_TOTAL]) {
+    for (uint8_t i = 0; i < DRIVER_LED_TOTAL; i++) {
+        int16_t led_index = non_indicators[i];
+
+        if (led_index < 0) {
+            break;
         }
+
+        rgb_matrix_set_color(i, RGB_OFF);
     }
 }
 
