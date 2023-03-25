@@ -63,7 +63,7 @@ void store_all_non_indicators(uint8_t base_layer) {
 void store_non_indicators(int16_t non_indicators[DRIVER_LED_TOTAL], uint8_t layer, bool (*is_indicator)(uint16_t)) {
     memset(non_indicators, -1, sizeof(int16_t) * DRIVER_LED_TOTAL);
     
-    for (uint8_t i = 0U, uint8_t j = 0U; i < DRIVER_LED_TOTAL; i++) {
+    for (uint8_t i = 0U, j = 0U; i < DRIVER_LED_TOTAL; i++) {
         uint16_t keycode = keymap_key_to_keycode(layer, led_index_key_position[i]);
 
         if (!(*is_indicator)(keycode)) {
