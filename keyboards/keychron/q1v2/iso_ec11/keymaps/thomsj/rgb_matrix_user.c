@@ -42,11 +42,15 @@ void keyboard_post_init_user(void) {
 }
 
 layer_state_t default_layer_state_set_user(layer_state_t state) {
-    store_all_non_indicators(state);
+    uint8_t layer = IS_LAYER_ON_STATE(state, MAC_BASE)
+        ? MAC_BASE
+        : WIN_BASE;
+
+    store_all_non_indicators(layer);
     return state;
 }
 
-void store_all_non_indicators(layer_state_t base_layer) {
+void store_all_non_indicators(uint8_t base_layer) {
 #ifdef CAPS_LOCK_INDICATOR_ENABLE
     store_non_indicators(not_caps_indicators, base_layer, is_caps_lock_indicator);
 #endif
@@ -66,6 +70,18 @@ void store_non_indicators(int16_t non_indicators[DRIVER_LED_TOTAL], uint8_t laye
             non_indicators[j++] = i;
         }
     }
+}
+
+bool is_caps_lock_indicator(uint16_t keycode) {
+#ifdef CAPS_LOCK_INDICATOR_LIGHT_ALPHAS
+    return keycode == KC_CAPS || (keycode <= KC_Z && keycode >= KC_A);
+#else
+    return keycode == KC_CAPS;
+#endif
+}
+
+bool is_active(uint16_t keycode) {
+    return keycode != KC_TRNS && keycode != KC_NO;
 }
 
 void rgb_matrix_indicators_user(void) {
@@ -99,16 +115,4 @@ void rgb_matrix_set_color_by_keycode(int16_t non_indicators[DRIVER_LED_TOTAL]) {
 
         rgb_matrix_set_color(i, RGB_OFF);
     }
-}
-
-bool is_caps_lock_indicator(uint16_t keycode) {
-#ifdef CAPS_LOCK_INDICATOR_LIGHT_ALPHAS
-    return keycode == KC_CAPS || (keycode <= KC_Z && keycode >= KC_A);
-#else
-    return keycode == KC_CAPS;
-#endif
-}
-
-bool is_active(uint16_t keycode) {
-    return keycode != KC_TRNS && keycode != KC_NO;
 }

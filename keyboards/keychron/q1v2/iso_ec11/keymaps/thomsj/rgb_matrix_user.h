@@ -16,7 +16,8 @@
 
 #pragma once
 
-void rgb_matrix_set_color_by_keycode(uint8_t led_min, uint8_t led_max, uint8_t layer, bool (*is_keycode)(uint16_t));
-
-bool is_not_caps_lock_indicator(uint16_t keycode);
-bool is_inactive(uint16_t keycode);
+void store_all_non_indicators(uint8_t base_layer);
+void store_non_indicators(int16_t non_indicators[], uint8_t layer, bool (*is_indicator)(uint16_t));
+bool is_caps_lock_indicator(uint16_t keycode);
+bool is_active(uint16_t keycode);
+void rgb_matrix_set_color_by_keycode(int16_t non_indicators[]);
