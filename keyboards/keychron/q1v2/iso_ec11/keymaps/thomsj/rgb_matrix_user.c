@@ -113,6 +113,6 @@ void rgb_matrix_set_color_by_keycode(int16_t non_indicators[DRIVER_LED_TOTAL]) {
             break;
         }
 
-        rgb_matrix_set_color(i, RGB_OFF);
+        rgb_matrix_set_color(led_index, RGB_OFF);
     }
 }
